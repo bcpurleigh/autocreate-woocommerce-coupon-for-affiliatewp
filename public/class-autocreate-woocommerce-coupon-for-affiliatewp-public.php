@@ -44,22 +44,17 @@ class Autocreate_WooCommerce_Coupon_for_AffiliateWP_Public {
 	 * @var		array	$meta_whitelist		Which meta keys to include when copying template to actual coupon.
 	 */
 	private $meta_whitelist = [
-		'discount_type',
-		'coupon_amount',
-		'individual_use',
-		'product_ids',
-		'exclude_product_ids',
-		'usage_limit',
-		'usage_limit_per_user',
-		'limit_usage_to_x_items',
-		'expiry_date',
-		'free_shipping',
-		'exclude_sale_items',
-		'product_categories',
-		'exclude_product_categories',
-		'minimum_amount',
-		'maximum_amount',
-		'customer_email'
+		'_mepr_coupons_should_expire',
+		'_mepr_coupons_expires_on',
+		'_mepr_coupons_usage_count',
+		'_mepr_coupons_usage_amount',
+		'_mepr_coupons_discount_type',
+		'_mepr_coupons_discount_amount',
+		'_mepr_coupons_valid_products',
+		'_mepr_coupons_discount_mode',
+		'_mepr_coupons_trial_days',
+		'_mepr_coupons_first_payment_discount_type',
+		'_mepr_coupons_first_payment_discount_amount',
 	];
 
 	/**
@@ -129,6 +124,7 @@ class Autocreate_WooCommerce_Coupon_for_AffiliateWP_Public {
 
 		// Generate random code
 		$coupon_code = static::random_code($code_length);
+		$coupon_code = strtoupper($coupon_code);
 
 		// Check if code already exists in db
 		while (true)
@@ -138,11 +134,11 @@ class Autocreate_WooCommerce_Coupon_for_AffiliateWP_Public {
 				SELECT ID
 				FROM $wpdb->posts
 				WHERE
-					post_type = 'shop_coupon'
+					post_type = 'memberpresscoupon'
 					AND post_name = '$coupon_code'
 				"
 			);
-			
+
 			if (0 === $wpdb->num_rows)
 			{
 				// Unique code found
@@ -152,23 +148,24 @@ class Autocreate_WooCommerce_Coupon_for_AffiliateWP_Public {
 			{
 				// Code exists, generate new one
 				$coupon_code = static::random_code($code_length);
+				$coupon_code = strtoupper($coupon_code);
 			}
 		}
-		
-		// Add coupon		
+
+		// Add coupon
 		$coupon = [
 			'post_title'	=> $coupon_code,
 			'post_content'	=> '',
 			'post_status'	=> 'publish',
 			'post_author'	=> 1,
-			'post_type'		=> 'shop_coupon'
+			'post_type'		=> 'memberpresscoupon'
 		];
 		$new_coupon_id = wp_insert_post( $coupon );
-		
+
 		// Attach to affiliate
 		update_post_meta($new_coupon_id, 'affwp_discount_affiliate', $affiliate_id);
 		update_post_meta($new_coupon_id, 'acwccawp_version', $this->version);
-		
+
 		// Fetch template meta
 		$template_id = get_option('acwccawp_template_id');
 		$template = get_post_meta($template_id);
@@ -245,11 +242,11 @@ class Autocreate_WooCommerce_Coupon_for_AffiliateWP_Public {
 	{
 		$chars_len = strlen($chars);
 		$result = '';
-		
+
 		for ($i = 0; $i < $length; $i++) {
 			$result .= $chars[rand(0, $chars_len - 1)];
 		}
-		
+
 		return $result;
 	}
 

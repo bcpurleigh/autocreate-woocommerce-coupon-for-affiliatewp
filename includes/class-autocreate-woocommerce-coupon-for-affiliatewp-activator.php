@@ -39,7 +39,7 @@ class Autocreate_WooCommerce_Coupon_for_AffiliateWP_Activator {
 
 		if (!(
 				0 < $template_id
-				AND 'shop_coupon' === get_post_type($template_id)
+				AND 'memberpresscoupon' === get_post_type($template_id)
 				AND 'yes' === get_post_meta($template_id, 'acwccawp_template', True)
 				AND 'publish' === get_post_status($template_id)
 			))
@@ -51,7 +51,7 @@ class Autocreate_WooCommerce_Coupon_for_AffiliateWP_Activator {
 				'post_excerpt'	=> '',
 				'post_status'	=> 'publish',
 				'post_author'	=> 1,
-				'post_type'		=> 'shop_coupon'
+				'post_type'		=> 'memberpresscoupon'
 			];
 
 			$template_id = wp_insert_post( $template_coupon );

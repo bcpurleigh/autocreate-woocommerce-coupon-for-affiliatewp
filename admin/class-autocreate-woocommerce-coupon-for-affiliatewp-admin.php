@@ -96,13 +96,13 @@ class Autocreate_WooCommerce_Coupon_for_AffiliateWP_Admin {
 
 	public function settings_link( $links, $file )
 	{
-		if ($file == 'autocreate-woocommerce-coupon-for-affiliatewp/autocreate-woocommerce-coupon-for-affiliatewp.php')
+		if (true)
 		{
 			$settings_link = '<a href="options-general.php?page=autocreate-woocommerce-coupon-for-affiliatewp">Settings</a>';
-			array_unshift($links, $settings_link); 
+			array_unshift($links, $settings_link);
 		}
-		
-		return $links; 
+
+		return $links;
 	}
 
 	public function register_settings()
